@@ -1,0 +1,42 @@
+<!-- 仿照spring xml 资源管理 dtd验证-->
+<!ELEMENT beans (
+        bean*
+        )>
+<!-- beans 的两个属性 一个延迟加载，一个自动装配-->
+<!ATTLIST beans default-lazy-init (true | false) "false">
+<!ATTLIST beans default-autowire (no | byName) "no">
+<!-- 申明bean-->
+<!ELEMENT bean (
+        (constructor-ars | proprety)*
+        )>
+<!--bean 的参数 和spring相似-->
+<!ATTLIST bean id CDATA #REQUIRED>
+<!ATTLIST bean class CDATA #REQUIRED>
+<!--延迟加载-->
+<!ATTLIST bean lazy-init (true | false | default) "default">
+<!-- 单例实例 -->
+<!ATTLIST bean singletion (true | false) "true">
+<!--自动装配-->
+<!ATTLIST bean autowire (no | byName | default) "default">
+
+<!--申明构造器-->
+<!ELEMENT constructor-ars (
+        (ref | value)
+        )>
+<!--申明属性 -->
+<!ELEMENT proprety (
+        (ref | value | conllection)?
+        )>
+<!--申明集合-->
+<!ELEMENT conllection (
+        (ref | value)+
+        )>
+
+<!ATTLIST proprety name CDATA #REQUIRED>
+<!ATTLIST proprety type CDATA #REQUIRED>
+<!ATTLIST proprety value CDATA #REQUIRED>
+<!--ref 为引用的实体-->
+<!ELEMENT ref EMPTY>
+<!ATTLIST ref bean CDATA #REQUIRED>
+<!-- value 里面的值需要时可以被解析的 例如 value=${value} -->
+<!ELEMENT value (#PCDATA)>
