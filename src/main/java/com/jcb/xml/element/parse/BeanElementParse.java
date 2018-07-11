@@ -67,11 +67,27 @@ public interface BeanElementParse {
 
 
     /**
+     * 获取集合节点
+     * @param element
+     * @return
+     */
+    public ConllectionElement getConllectionElement(Element element);
+
+
+    /**
      *  转换叶子节点值
      * @param leafElement
      * @return
      */
     public Object getValueOfValueElement(Element leafElement);
+
+
+    /**
+     * 获取constructor 参数值
+     * @param element
+     * @return
+     */
+    public List<LeafElementParse> getConstructorArgsValue(Element element);
 
 
 

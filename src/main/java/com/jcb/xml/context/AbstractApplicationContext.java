@@ -8,15 +8,12 @@ import com.jcb.xml.document.DocumentLoader;
 import com.jcb.xml.document.XmlDocumentLoader;
 import com.jcb.xml.element.ElementLoader;
 import com.jcb.xml.element.ElementLoaderImpl;
-import com.jcb.xml.element.parse.BeanElementParse;
-import com.jcb.xml.element.parse.BeanElementParseImpl;
+import com.jcb.xml.element.parse.*;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.xml.sax.SAXException;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @program: deu
@@ -35,6 +32,10 @@ public abstract  class AbstractApplicationContext implements ApplicationContext{
      */
     protected ElementLoader elementLoader = new ElementLoaderImpl();
     /**
+     * bean element工具类
+     */
+    BeanElementParse beanElementParse = new BeanElementParseImpl();
+    /**
      * bean工厂
      */
     protected BeanFactory beanFactory =new  BeanFactoryImpl();
@@ -52,7 +53,12 @@ public abstract  class AbstractApplicationContext implements ApplicationContext{
 
     @Override
     public Object getbyId(String id) {
-        return beanInstances.get(id);
+        Object bean= beanInstances.get(id);
+        if(bean==null){
+            //创建bean
+            bean = createBean(id);
+        }
+        return bean;
     }
 
     /**
@@ -76,16 +82,109 @@ public abstract  class AbstractApplicationContext implements ApplicationContext{
      */
     protected void instanceBean(){
          Collection<Element> elements= elementLoader.getAllElement();
-        BeanElementParse beanElementParse = new BeanElementParseImpl();
         elements.stream().filter(element ->!beanElementParse.getLazyInit(element))
                 .forEach(element -> {
                     String id= beanElementParse.getID(element);
                     String clazz=beanElementParse.getClazz(element);
-                    //TODO 获取所有够着函数的参数
-                     beanElementParse.getConstructorArgElement(element);
+                    Object bean= beanInstances.get(id);
+                    if(bean==null){
+                        //创建bean
+                        createBean(id);
+                    }
 
 
         });
 
+    }
+
+    /**
+     * 创建bean
+     * @param id
+     */
+    protected  Object createBean(String id){
+        Element element= elementLoader.getElementById(id);
+        List<Object> constructArgs= new ArrayList<>();
+        beanElementParse.getConstructorArgElement(element).forEach(constructor->{
+            constructor.elements().forEach(leafElement->{
+                constructArgs.addAll(this.getArgs((Element) leafElement));
+            });
+        });
+
+        String className= beanElementParse.getClazz(element);
+        Object bean= beanFactory.getBean(className,constructArgs.toArray());
+        //初始化参数
+        bean=this.propertiesGHandler(bean,id);
+
+        if(beanElementParse.getSingleton(element)){
+            beanInstances.put(id,bean);
+        }
+        return  bean;
+
+    }
+
+    /**
+     * 初始化bean属性
+     * @param obj
+     * @param id
+     */
+    protected Object propertiesGHandler(Object obj,String id){
+        Element element= elementLoader.getElementById(id);
+        Map<String,Object> properties = new HashMap<>();
+
+        beanElementParse.getPropretyElement(element).forEach(property->{
+            beanElementParse.getConllectionElement(property).getList().forEach(leafElementParse -> {
+                properties.put(beanElementParse.getAttribute(property,"name") ,this.getArgs((Element) leafElementParse));
+            });
+            ((Element)property).elements().forEach(leafElementParse->{
+                properties.put(beanElementParse.getAttribute(property,"name") ,this.getOneArgs((Element) leafElementParse));
+            });
+
+        });
+
+        return propertyHandler.setProperties(obj,properties);
+    }
+
+    /**
+     * 初始化参数列表
+     * @param leafElement
+     * @return
+     */
+    protected  List getArgs(Element leafElement){
+        List<Object> argsList = new ArrayList<>();
+        LeafElementParse leafElementParse= beanElementParse.getleafElement((Element) leafElement);
+        if(leafElementParse instanceof RefLeafElementarseImpl){
+            Object bean= beanInstances.get(leafElementParse.getVal());
+            if(bean==null){
+                //创建bean
+                argsList.add(createBean(leafElementParse.getVal()));
+            }else{
+                argsList.add(bean);
+            }
+
+        }else{
+            argsList.add(beanElementParse.getValueOfValueElement((Element) leafElementParse));
+        }
+        return argsList;
+    }
+
+    /**
+     * 返回只有一个参数
+     * @param leafElement
+     * @return
+     */
+    protected Object getOneArgs(Element leafElement){
+        LeafElementParse leafElementParse= beanElementParse.getleafElement((Element) leafElement);
+        if(leafElementParse instanceof RefLeafElementarseImpl){
+            Object bean= beanInstances.get(leafElementParse.getVal());
+            if(bean==null){
+                //创建bean
+               return createBean(leafElementParse.getVal());
+            }else{
+                return bean;
+            }
+
+        }else{
+            return beanElementParse.getValueOfValueElement((Element) leafElementParse);
+        }
     }
 }

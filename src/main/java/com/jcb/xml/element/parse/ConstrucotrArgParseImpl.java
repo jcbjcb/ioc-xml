@@ -1,6 +1,6 @@
 package com.jcb.xml.element.parse;
 
-public class ConstrucotrArgParseImpl implements ConstructorArgParse {
+public class ConstrucotrArgParseImpl implements LeafElementParse {
 
     private String value;
 

@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE beans SYSTEM "beans.dtd">
 <beans>
-    <bean id="test" class="com.jcb.ioc.xml.AppTest">
+    <bean id="school" class="com.jcb.xml.model.School">
         <constructor-arg>
-            <value type="java.util.Integer">1</value>
-        </constructor-arg>
-        <constructor-arg>
-            <value type="java.util.Float">1.1</value>
+            <value type="java.lang.String">1.0</value>
         </constructor-arg>
         <property name="name">
-            <value type="java.lang.String">aaa</value>
+            <value type="java.lang.String">环球中心学校1</value>
         </property>
-        <property name="list">
-            <collection type="java.util.List">
-                <value type="java.lang.String">str</value>
-            </collection>
+        <property name="areas">
+            <value type="java.lang.String">成都市高新区环球中心</value>
         </property>
     </bean>
+
 </beans>

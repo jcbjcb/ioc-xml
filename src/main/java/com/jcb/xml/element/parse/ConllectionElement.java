@@ -12,7 +12,7 @@ public class ConllectionElement implements  LeafElementParse {
 
     private String value;
 
-    private List<LeafElementParse> list;
+    private List<LeafElementParse> list = new ArrayList<>();
 
     public ConllectionElement(String value) {
         this.value = value;
