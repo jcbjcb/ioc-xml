@@ -75,15 +75,15 @@ public class BeanElementParseImpl implements  BeanElementParse {
     }
 
     @Override
-    public ConllectionElement getConllectionElement(Element element) {
-
-        Element conllectionElement= element.element("collection");
-        if(conllectionElement!=null) {
-            ConllectionElement ConllectionElement = new ConllectionElement(conllectionElement.attributeValue("type"));
-            conllectionElement.elements().forEach(leafEnelment -> ConllectionElement.add(this.getleafElement((Element) leafEnelment)));
-            return ConllectionElement;
-        }
-        return  null;
+    public List<ConllectionElement> getConllectionElement(Element element) {
+        List<ConllectionElement> list = new ArrayList<>();
+        List<Element> conllectionElements= element.elements("collection");
+        conllectionElements.forEach(connectionElement ->{
+            ConllectionElement ConllectionElement = new ConllectionElement(connectionElement.attributeValue("type"));
+            connectionElement.elements().forEach(leafEnelment -> ConllectionElement.add((Element) leafEnelment));
+            list.add(ConllectionElement);
+        } );
+        return  list;
     }
 
     @Override

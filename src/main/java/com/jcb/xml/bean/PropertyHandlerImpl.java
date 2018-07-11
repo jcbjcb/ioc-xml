@@ -20,6 +20,7 @@ public class PropertyHandlerImpl implements  PropertyHandler {
             Class<?> propertiesClass= IocUtil.getClass(properties.get(p));
             String setMethodName=this.getSetMenthodName(p);
             try {
+                ///TODO 获取setList 方法有问题   java.lang.NoSuchMethodException: com.jcb.xml.model.Student.setList(java.util.ArrayList)
                 Method method= clazz.getMethod(setMethodName,propertiesClass);
                 method.invoke(obj,properties.get(p));
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {

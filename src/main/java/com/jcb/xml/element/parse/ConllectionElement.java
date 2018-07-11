@@ -12,22 +12,22 @@ public class ConllectionElement implements  LeafElementParse {
 
     private String value;
 
-    private List<LeafElementParse> list = new ArrayList<>();
+    private List<Element> list = new ArrayList<>();
 
     public ConllectionElement(String value) {
         this.value = value;
     }
 
 
-    public List<LeafElementParse> getList() {
+    public List<Element> getList() {
         return list;
     }
 
-    public void setList(List<LeafElementParse> list) {
+    public void setList(List<Element> list) {
         this.list = list;
     }
 
-    public void add(LeafElementParse element){
+    public void add(Element element){
         list.add(element);
     }
 
@@ -37,11 +37,4 @@ public class ConllectionElement implements  LeafElementParse {
     }
 
 
-    public Object[] getvalues(){
-        List<Object> values = new ArrayList<>();
-        list.stream().forEach(p->{
-            values.add(p.getVal());
-        });
-        return values.toArray();
-    }
 }

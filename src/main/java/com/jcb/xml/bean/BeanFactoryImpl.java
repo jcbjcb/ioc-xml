@@ -44,6 +44,6 @@ public class BeanFactoryImpl implements  BeanFactory {
         for (Object arg : args) {
             list.add(IocUtil.getClass(arg));
         }
-        return (Class<?>[]) list.toArray();
+        return list.toArray(new Class[0]);
     }
 }

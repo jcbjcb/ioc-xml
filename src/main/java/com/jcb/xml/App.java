@@ -2,19 +2,10 @@ package com.jcb.xml;
 
 import com.jcb.xml.context.ApplicationContext;
 import com.jcb.xml.context.ApplicationContextImpl;
-import com.jcb.xml.document.DocumentLoader;
-import com.jcb.xml.document.XmlDocumentLoader;
-import com.jcb.xml.element.ElementLoader;
-import com.jcb.xml.element.ElementLoaderImpl;
-import com.jcb.xml.element.parse.AutowireParse;
-import com.jcb.xml.element.parse.BeanElementParse;
-import com.jcb.xml.element.parse.BeanElementParseImpl;
+import com.jcb.xml.model.Classes;
 import com.jcb.xml.model.School;
-import org.dom4j.Document;
-import org.dom4j.Element;
+import com.jcb.xml.model.Student;
 import org.xml.sax.SAXException;
-
-import java.util.List;
 
 /**
  * Hello world!
@@ -56,6 +47,17 @@ public class App
 
         test();
 
+//        try {
+//            Class<?> clazz= Class.forName(Student.class.getName());
+//            Object student= clazz.newInstance();
+//
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static  void test(){
@@ -63,6 +65,15 @@ public class App
         ApplicationContext applicationContext = new  ApplicationContextImpl(xmlpaht);
         School school = (School) applicationContext.getbyId("school");
         System.out.println(school.getName());
+
+        Classes classes = (Classes) applicationContext.getbyId("classes");
+
+        System.out.println(classes.getName());
+        System.out.println(classes.getSchool().getName());
+        classes.getSchool().setName("环球中心学校2");
+
+        Student student = (Student) applicationContext.getbyId("student");
+        System.out.println(student.getClasses().getSchool().getName());
     }
 
 }

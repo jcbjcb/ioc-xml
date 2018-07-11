@@ -12,5 +12,37 @@
             <value type="java.lang.String">成都市高新区环球中心</value>
         </property>
     </bean>
+    <bean id="classes" class="com.jcb.xml.model.Classes">
+        <property name="name">
+            <value type="java.lang.String">一年级</value>
+        </property>
+        <property name="grade">
+            <value type="java.lang.String">一班</value>
+        </property>
+        <property name="studentAmount">
+            <value type="java.lang.Integer">31</value>
+        </property>
+        <property name="school">
+           <ref bean="school"></ref>
+        </property>
+    </bean>
+
+    <bean id="student" class="com.jcb.xml.model.Student">
+        <property name="name">
+            <value type="java.lang.String">小宝</value>
+        </property>
+        <property name="age">
+            <value type="java.lang.Integer">10</value>
+        </property>
+        <property name="classes">
+            <ref bean="classes"></ref>
+        </property>
+        <!--<property name="list">-->
+            <!--<collection type="java.util.List">-->
+                <!--<ref bean="classes"></ref>-->
+                <!--<value type="java.lang.String">二年级</value>-->
+            <!--</collection>-->
+        <!--</property>-->
+    </bean>
 
 </beans>

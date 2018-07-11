@@ -111,7 +111,11 @@ public abstract  class AbstractApplicationContext implements ApplicationContext{
         });
 
         String className= beanElementParse.getClazz(element);
-        Object bean= beanFactory.getBean(className,constructArgs.toArray());
+        Object bean=null;
+        if(constructArgs.size()>0)
+             bean= beanFactory.getBean(className,constructArgs.toArray());
+        else
+             bean= beanFactory.getBean(className);
         //初始化参数
         bean=this.propertiesGHandler(bean,id);
 
@@ -132,12 +136,20 @@ public abstract  class AbstractApplicationContext implements ApplicationContext{
         Map<String,Object> properties = new HashMap<>();
 
         beanElementParse.getPropretyElement(element).forEach(property->{
-            beanElementParse.getConllectionElement(property).getList().forEach(leafElementParse -> {
-                properties.put(beanElementParse.getAttribute(property,"name") ,this.getArgs((Element) leafElementParse));
-            });
+
             ((Element)property).elements().forEach(leafElementParse->{
                 properties.put(beanElementParse.getAttribute(property,"name") ,this.getOneArgs((Element) leafElementParse));
             });
+
+            List<ConllectionElement> conllectionElements =beanElementParse.getConllectionElement(property);
+            conllectionElements.forEach(conllectionElement -> {
+                List<Object> conllectionArgs=new ArrayList<>();
+                conllectionElement.getList().forEach(leafElementParse -> {
+                    conllectionArgs.add(this.getOneArgs((Element) leafElementParse));
+                });
+                properties.put(beanElementParse.getAttribute(property,"name") ,conllectionArgs);
+            });
+
 
         });
 
@@ -162,7 +174,7 @@ public abstract  class AbstractApplicationContext implements ApplicationContext{
             }
 
         }else{
-            argsList.add(beanElementParse.getValueOfValueElement((Element) leafElementParse));
+            argsList.add(beanElementParse.getValueOfValueElement(leafElement));
         }
         return argsList;
     }
@@ -184,7 +196,7 @@ public abstract  class AbstractApplicationContext implements ApplicationContext{
             }
 
         }else{
-            return beanElementParse.getValueOfValueElement((Element) leafElementParse);
+            return beanElementParse.getValueOfValueElement(leafElement);
         }
     }
 }

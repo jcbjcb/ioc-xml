@@ -71,7 +71,7 @@ public interface BeanElementParse {
      * @param element
      * @return
      */
-    public ConllectionElement getConllectionElement(Element element);
+    public List<ConllectionElement> getConllectionElement(Element element);
 
 
     /**
