@@ -11,7 +11,7 @@ public class Student {
 
     private Classes classes;
 
-    private List<Object> list = new ArrayList<>();
+    private List list = new ArrayList();
 
     public String getName() {
         return name;

@@ -7,12 +7,6 @@ import com.jcb.xml.model.School;
 import com.jcb.xml.model.Student;
 import org.xml.sax.SAXException;
 
-import java.io.Serializable;
-import java.util.AbstractCollection;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Hello world!
  *
@@ -65,21 +59,26 @@ public class App
 //            e.printStackTrace();
 //        }
 
-        ArrayList list= new ArrayList();
-        System.out.println(list.getClass());
-        aa(list);
+        test();
 
-//        clzz.getmethod(name,arrListclass)
+
     }
 
-    public static void aa(List list){
-        System.out.println("list ");
-    }
 
-    public static void aa(ArrayList list){
+//    public static void main(String[] args) {
+//        try {
+//            Class<?> clazz= Class.forName(Student.class.getTypeName());
+//            List list = new ArrayList();
+//            clazz.getMethod("setList",list.getClass());
+//
+//        } catch (ClassNotFoundException | NoSuchMethodException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
-        System.out.println("ArrayList ");
-    }
+
+
 
 
     public static  void test(){
@@ -96,6 +95,7 @@ public class App
 
         Student student = (Student) applicationContext.getbyId("student");
         System.out.println(student.getClasses().getSchool().getName());
+        student.getList().forEach(System.out::println);
     }
 
 

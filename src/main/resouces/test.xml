@@ -37,12 +37,12 @@
         <property name="classes">
             <ref bean="classes"></ref>
         </property>
-        <!--<property name="list">-->
-            <!--<collection type="java.util.List">-->
-                <!--<ref bean="classes"></ref>-->
-                <!--<value type="java.lang.String">二年级</value>-->
-            <!--</collection>-->
-        <!--</property>-->
+        <property name="list">
+            <collection type="java.util.List">
+                <ref bean="classes"></ref>
+                <value type="java.lang.String">二年级</value>
+            </collection>
+        </property>
     </bean>
 
 </beans>

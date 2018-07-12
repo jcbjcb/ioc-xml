@@ -4,9 +4,7 @@ import com.jcb.xml.util.IocUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @program: deu
@@ -22,8 +20,12 @@ public class PropertyHandlerImpl implements  PropertyHandler {
             Class<?> propertiesClass= IocUtil.getClass(properties.get(p));
             String setMethodName=this.getSetMenthodName(p);
             try {
-                ///TODO 获取setList 方法有问题   java.lang.NoSuchMethodException: com.jcb.xml.model.Student.setList(java.util.ArrayList)
-                Method method= clazz.getMethod(setMethodName,propertiesClass);
+
+//                Method method= clazz.getMethod(setMethodName,propertiesClass); 如果使用该方法 会不能获取以多态方式传入的参数
+                Method method= this.getMethod(clazz.getTypeName(),setMethodName,propertiesClass);
+                if(method == null){
+                    throw new NoSuchMethodException();
+                }
                 method.invoke(obj,properties.get(p));
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
@@ -70,13 +72,26 @@ public class PropertyHandlerImpl implements  PropertyHandler {
      * @param methodName
      * @return
      */
-    private Method getMethod(String className,String methodName){
+    private Method getMethod(String className,String methodName,Class<?> propertiesClass){
 
         Method[] methods=getMethods(className);
         for (Method method : methods) {
             if(method.getName().equals(methodName)){
                 if(method.getParameterCount() == 1){
+                    //该函数的参数类型和传入参数类型相同
+                    if(method.getParameterTypes()[0].getTypeName().equals(propertiesClass.getTypeName())){
+                        return method;
+                        //该函数的参数类型是传入参数类型的父类
+                    }else if(method.getParameterTypes()[0].getTypeName().equals(propertiesClass.getSuperclass().getTypeName())){
+                        return method;
+                    }else
+                    {
+                        Set<String> superClassAndSuperInterfaceList= this.getAllSuperClassAndSuperInterface(propertiesClass);
+                        //如果传入参数类型是参数类型的子类 也返回改函数
+                        if(superClassAndSuperInterfaceList.contains(method.getParameterTypes()[0].getTypeName()))
+                            return method;
 
+                    }
                 }
             }
         }
@@ -84,6 +99,46 @@ public class PropertyHandlerImpl implements  PropertyHandler {
     }
 
 
+    /**
+     * 获取所有父类类型和父类接口类型
+     * @param clazz
+     * @return
+     */
+    private Set<String> getAllSuperClassAndSuperInterface(Class<?> clazz){
+        Set<String> superClassAndSuperInterfaceList = new HashSet<>();
+        getAllSupersClasss(superClassAndSuperInterfaceList,clazz);
+        getAllSuperInterfaces(superClassAndSuperInterfaceList,clazz);
+        return superClassAndSuperInterfaceList;
+    }
 
+    /**
+     * 递归获取所父类 类型
+     * @param parentClassList
+     * @param clazz
+     */
+    private Set<String> getAllSupersClasss(Set<String> parentClassList,Class<?> clazz){
+        parentClassList.add(clazz.getSuperclass().getName());
+        if(Object.class.getTypeName()!=clazz.getSuperclass().getTypeName()){
+            //父类也可能实现接口
+            getAllSuperInterfaces(parentClassList,clazz.getSuperclass());
+            //递归查询父类
+            getAllSupersClasss(parentClassList,clazz.getSuperclass());
+        }
+        return parentClassList;
+    }
+
+    /**
+     * 递归获取父类接口
+     * @param parentInterfaceList
+     * @param clazz
+     */
+    private Set<String> getAllSuperInterfaces(Set<String> parentInterfaceList,Class<?> clazz){
+        for (Class<?> aClass : clazz.getInterfaces()) {
+            parentInterfaceList.add(aClass.getTypeName());
+            //递归查询实现接口
+            getAllSuperInterfaces(parentInterfaceList,aClass);
+        }
+        return parentInterfaceList;
+    }
 
 }
