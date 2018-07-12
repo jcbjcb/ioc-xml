@@ -4,6 +4,8 @@ import com.jcb.xml.util.IocUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,6 +47,43 @@ public class PropertyHandlerImpl implements  PropertyHandler {
 
         return  sb.toString();
     }
+
+    /**
+     * 获取所有方法
+     * @param className
+     * @return
+     */
+    private Method[] getMethods(String className){
+        try {
+            Class<?> clazz= Class.forName(className);
+            return  clazz.getMethods();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return  null;
+    }
+
+    /**
+     * 获取只有一个参数的对应方法
+     * @param className
+     * @param methodName
+     * @return
+     */
+    private Method getMethod(String className,String methodName){
+
+        Method[] methods=getMethods(className);
+        for (Method method : methods) {
+            if(method.getName().equals(methodName)){
+                if(method.getParameterCount() == 1){
+
+                }
+            }
+        }
+        return  null;
+    }
+
+
 
 
 }

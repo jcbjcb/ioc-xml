@@ -7,6 +7,12 @@ import com.jcb.xml.model.School;
 import com.jcb.xml.model.Student;
 import org.xml.sax.SAXException;
 
+import java.io.Serializable;
+import java.util.AbstractCollection;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Hello world!
  *
@@ -45,7 +51,7 @@ public class App
 //            });
 //        });
 
-        test();
+//        test();
 
 //        try {
 //            Class<?> clazz= Class.forName(Student.class.getName());
@@ -58,7 +64,23 @@ public class App
 //        } catch (InstantiationException e) {
 //            e.printStackTrace();
 //        }
+
+        ArrayList list= new ArrayList();
+        System.out.println(list.getClass());
+        aa(list);
+
+//        clzz.getmethod(name,arrListclass)
     }
+
+    public static void aa(List list){
+        System.out.println("list ");
+    }
+
+    public static void aa(ArrayList list){
+
+        System.out.println("ArrayList ");
+    }
+
 
     public static  void test(){
         String xmlpaht= App.class.getResource("/").getPath()+"test.xml";
@@ -75,5 +97,6 @@ public class App
         Student student = (Student) applicationContext.getbyId("student");
         System.out.println(student.getClasses().getSchool().getName());
     }
+
 
 }
