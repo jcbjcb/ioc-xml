@@ -5,7 +5,7 @@ package com.jcb.xml.element.parse;
  */
 public interface LeafElementParse {
 
-    public default String getVal() {
+    public default Object getVal() {
         return null;
     }
 
