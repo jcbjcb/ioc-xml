@@ -1,5 +1,7 @@
 package com.jcb.xml.bean;
 
+import java.util.*;
+
 /**
  * @program: deu
  * @description: ${description}
@@ -18,5 +20,13 @@ public interface BeanFactory {
     default Object getBean(String className, Object... args) {
         return null;
     }
+
+    /**
+     * 根据类型生成collection 实现类
+     * @param CollectionClazz
+     * @param size
+     * @return
+     */
+    public Collection<?> createCollection(String CollectionClazz,int size) throws ClassNotFoundException;
 }
 

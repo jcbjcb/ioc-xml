@@ -4,14 +4,14 @@ public class ValueLeafElementParseImpl implements  LeafElementParse{
 
 
 
-    private String value;
+    private Object value;
 
-    public ValueLeafElementParseImpl(String value) {
+    public ValueLeafElementParseImpl(Object value) {
         this.value = value;
     }
 
     @Override
-    public String getVal() {
+    public Object getVal() {
         return value;
     }
 }

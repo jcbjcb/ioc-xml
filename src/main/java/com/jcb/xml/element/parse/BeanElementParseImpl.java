@@ -69,7 +69,7 @@ public class BeanElementParseImpl implements  BeanElementParse {
         if("ref".equals(name)){
             return  new RefLeafElementarseImpl(element.attributeValue("bean"));
         }else if("value".equals(name)){
-            return new ValueLeafElementParseImpl(element.attributeValue("type"));
+            return new ValueLeafElementParseImpl(this.getValueOfValueElement(element));
         }
         return null;
     }
@@ -107,4 +107,10 @@ public class BeanElementParseImpl implements  BeanElementParse {
         });
         return list;
     }
+
+    @Override
+    public boolean validateCollection(Element element) {
+        return element.getName().equals("collection");
+    }
+
 }

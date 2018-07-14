@@ -138,16 +138,24 @@ public abstract  class AbstractApplicationContext implements ApplicationContext{
         beanElementParse.getPropretyElement(element).forEach(property->{
 
             ((Element)property).elements().forEach(leafElementParse->{
-                properties.put(beanElementParse.getAttribute(property,"name") ,this.getOneArgs((Element) leafElementParse));
+                if(!beanElementParse.validateCollection((Element) leafElementParse))
+                    properties.put(beanElementParse.getAttribute(property,"name") ,this.getOneArgs((Element) leafElementParse));
             });
 
             List<ConllectionElement> conllectionElements =beanElementParse.getConllectionElement(property);
             conllectionElements.forEach(conllectionElement -> {
-                List<Object> conllectionArgs=new ArrayList<>();
-                conllectionElement.getList().forEach(leafElementParse -> {
-                    conllectionArgs.add(this.getOneArgs((Element) leafElementParse));
-                });
-                properties.put(beanElementParse.getAttribute(property,"name") ,conllectionArgs);
+                try {
+                    Collection conllectionArgs = beanFactory.createCollection(conllectionElement.getVal(),conllectionElement.getList().size());
+                    if(conllectionArgs!=null) {
+                        conllectionElement.getList().forEach(leafElementParse -> {
+                            conllectionArgs.add(this.getOneArgs((Element) leafElementParse));
+                        });
+
+                        properties.put(beanElementParse.getAttribute(property, "name"), conllectionArgs);
+                    }
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
             });
 
 
@@ -168,13 +176,13 @@ public abstract  class AbstractApplicationContext implements ApplicationContext{
             Object bean= beanInstances.get(leafElementParse.getVal());
             if(bean==null){
                 //创建bean
-                argsList.add(createBean(leafElementParse.getVal()));
+                argsList.add(createBean(leafElementParse.getVal().toString()));
             }else{
                 argsList.add(bean);
             }
 
         }else{
-            argsList.add(beanElementParse.getValueOfValueElement(leafElement));
+            argsList.add(leafElementParse.getVal());
         }
         return argsList;
     }
@@ -190,13 +198,13 @@ public abstract  class AbstractApplicationContext implements ApplicationContext{
             Object bean= beanInstances.get(leafElementParse.getVal());
             if(bean==null){
                 //创建bean
-               return createBean(leafElementParse.getVal());
+               return createBean(leafElementParse.getVal().toString());
             }else{
                 return bean;
             }
 
         }else{
-            return beanElementParse.getValueOfValueElement(leafElement);
+            return leafElementParse.getVal();
         }
     }
 }

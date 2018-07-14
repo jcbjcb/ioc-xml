@@ -2,6 +2,7 @@ package com.jcb.xml.bean;
 
 import com.jcb.xml.util.IocUtil;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -22,6 +23,7 @@ public class PropertyHandlerImpl implements  PropertyHandler {
             try {
 
 //                Method method= clazz.getMethod(setMethodName,propertiesClass); 如果使用该方法 会不能获取以多态方式传入的参数
+//                Method method= this.getMethod(clazz.getTypeName(),setMethodName,propertiesClass);
                 Method method= this.getMethod(clazz.getTypeName(),setMethodName,propertiesClass);
                 if(method == null){
                     throw new NoSuchMethodException();
@@ -74,28 +76,29 @@ public class PropertyHandlerImpl implements  PropertyHandler {
      */
     private Method getMethod(String className,String methodName,Class<?> propertiesClass){
 
-        Method[] methods=getMethods(className);
-        for (Method method : methods) {
-            if(method.getName().equals(methodName)){
-                if(method.getParameterCount() == 1){
-                    //该函数的参数类型和传入参数类型相同
-                    if(method.getParameterTypes()[0].getTypeName().equals(propertiesClass.getTypeName())){
-                        return method;
-                        //该函数的参数类型是传入参数类型的父类
-                    }else if(method.getParameterTypes()[0].getTypeName().equals(propertiesClass.getSuperclass().getTypeName())){
-                        return method;
-                    }else
-                    {
-                        Set<String> superClassAndSuperInterfaceList= this.getAllSuperClassAndSuperInterface(propertiesClass);
-                        //如果传入参数类型是参数类型的子类 也返回改函数
-                        if(superClassAndSuperInterfaceList.contains(method.getParameterTypes()[0].getTypeName()))
-                            return method;
+//        Method[] methods=getMethods(className);
+//        for (Method method : methods) {
+//            if(method.getName().equals(methodName)){
+//                if(method.getParameterCount() == 1){
+//                    //该函数的参数类型和传入参数类型相同
+//                    if(method.getParameterTypes()[0].getTypeName().equals(propertiesClass.getTypeName())){
+//                        return method;
+//                        //该函数的参数类型是传入参数类型的父类
+//                    }else if(method.getParameterTypes()[0].getTypeName().equals(propertiesClass.getSuperclass().getTypeName())){
+//                        return method;
+//                    }else
+//                    {
+//                        Set<String> superClassAndSuperInterfaceList= this.getAllSuperClassAndSuperInterface(propertiesClass);
+//                        //如果传入参数类型是参数类型的子类 也返回改函数
+//                        if(superClassAndSuperInterfaceList.contains(method.getParameterTypes()[0].getTypeName()))
+//                            return method;
+//
+//                    }
+//                }
+//            }
+//        }
 
-                    }
-                }
-            }
-        }
-        return  null;
+        return getMethod(className,methodName,new Class<?>[]{propertiesClass});
     }
 
 
@@ -139,6 +142,49 @@ public class PropertyHandlerImpl implements  PropertyHandler {
             getAllSuperInterfaces(parentInterfaceList,aClass);
         }
         return parentInterfaceList;
+    }
+
+
+    /**
+     * 获取参数所对应的函数
+     * @param className
+     * @param argsClass
+     * @return
+     */
+    private Method getMethod(String className, String methodName,Class<?>[] argsClass){
+        Method[] methods=getMethods(className);
+        for (Method method : methods) {
+            if(method.getName().equals(methodName)) {
+                if (method.getParameterTypes().length == argsClass.length) {
+                    if (checkArgsType(method.getParameterTypes(), argsClass)) {
+                        return method;
+                    }
+                } else {
+                    continue;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     *
+     * @param sourceArgsClass 函数的参数类型
+     * @param argsClass 传入函数的参数类型
+     * @return
+     */
+    private boolean checkArgsType(Class<?>[] sourceArgsClass,Class<?>[] argsClass){
+
+        for (int i =0;i< sourceArgsClass.length;i++) {
+            //aClass.isAssignableFrom(bClass)  判断a是否是b的父类或则父接口
+            if(!sourceArgsClass[i].isAssignableFrom(argsClass[i]))
+                return false;
+
+        }
+
+        return true;
+
     }
 
 }
