@@ -107,4 +107,10 @@ public class BeanElementParseImpl implements  BeanElementParse {
         });
         return list;
     }
+
+    @Override
+    public boolean validateCollection(Element element) {
+        return element.getName().equals("collection");
+    }
+
 }

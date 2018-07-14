@@ -90,7 +90,12 @@ public interface BeanElementParse {
     public List<LeafElementParse> getConstructorArgsValue(Element element);
 
 
-
+    /**
+     * 检查是否是collection
+     * @param element
+     * @return
+     */
+    public boolean validateCollection(Element element);
 
 
 

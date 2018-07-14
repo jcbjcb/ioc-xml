@@ -4,8 +4,7 @@ import com.jcb.xml.util.IocUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @program: deu
@@ -38,6 +37,38 @@ public class BeanFactoryImpl implements  BeanFactory {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 创建 collection
+     * @param CollectionClazz
+     * @param size
+     * @return
+     */
+    @Override
+    public Collection<?> createCollection(String CollectionClazz, int size) throws ClassNotFoundException {
+        Class<?>  CollectionClazzType= Class.forName(CollectionClazz);
+        if (CollectionClazzType.isInterface()) {
+            if (Set.class == CollectionClazzType || Collection.class == CollectionClazzType) {
+                return new LinkedHashSet<>(size);
+            }
+            else if (List.class == CollectionClazzType) {
+                return new ArrayList<>(size);
+            }
+            else {
+                return null;
+            }
+        }else{
+            if (!Collection.class.isAssignableFrom(CollectionClazzType)) {
+                return null;
+            }
+            try {
+                return (Collection<?>) CollectionClazzType.newInstance();
+            }
+            catch (Throwable ex) {
+                return null;
+            }
+        }
     }
 
     /**
